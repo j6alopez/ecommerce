@@ -1,6 +1,6 @@
 package com.ecommerce.domain;
 
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -14,6 +14,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a Cart in the Ecommerce
+ * @author JoseAntonio Lopez
+ * @version 1.0
+*/
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -24,8 +30,8 @@ public class Cart {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private  int id;
+	private  Long id;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
-	private  List<Product> cartItemList;
+	private  Set<Product> cartItemList;
 	
 }

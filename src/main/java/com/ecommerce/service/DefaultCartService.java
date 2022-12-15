@@ -9,10 +9,10 @@ import com.ecommerce.domain.Product;
 import com.ecommerce.repository.CartRepository;
 /**
  * Defualt {@link com.ecommerce.service.CartService} for the ecommerce
- * @author JoseAntonio Lopez
+ * @author Jose Antonio Lopez
  * @version 1.0
 */
-public class DefualtCartService implements CartService {
+public class DefaultCartService implements CartService {
 	
 	@Autowired
 	private CartRepository cartRepository;

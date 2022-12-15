@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a phyisical Article
+ * @author Jose Antonio Lopez
+ * @version 1.0
+*/
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -19,7 +25,7 @@ import lombok.ToString;
 public class Article {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 	private String description;
 	
 }
