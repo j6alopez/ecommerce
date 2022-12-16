@@ -7,10 +7,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -20,10 +22,12 @@ import lombok.Setter;
 */
 @Entity
 @IdClass(ProductKey.class)
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "cart")
+@ToString(exclude = "cart")
 public class Product implements CartItem{
 	
 	@Id
@@ -35,10 +39,5 @@ public class Product implements CartItem{
 	private Article article;
 	
 	private long amount;
-
-	@Override
-	public String toString() {
-		return "Product [cart=" + cart + ", article=" + article.getDescription() + ", amount=" + amount + "]";
-	}
 	
 }

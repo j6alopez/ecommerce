@@ -1,5 +1,6 @@
 package com.ecommerce.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -32,6 +33,6 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private  Long id;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
-	private  Set<Product> cartItemList;
+	private  Set<Product> cartItemSet = new HashSet<>();
 	
 }
