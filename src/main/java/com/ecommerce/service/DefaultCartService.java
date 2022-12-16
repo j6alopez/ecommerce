@@ -3,19 +3,32 @@ package com.ecommerce.service;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ecommerce.domain.Cart;
 import com.ecommerce.domain.Product;
 import com.ecommerce.repository.CartRepository;
+
+import lombok.RequiredArgsConstructor;
 /**
  * Defualt {@link com.ecommerce.service.CartService} for the ecommerce
  * @author Jose Antonio Lopez
  * @version 1.0
 */
+@Service
 public class DefaultCartService implements CartService {
 	
-	@Autowired
-	private CartRepository cartRepository;
+	
+	private final CartRepository cartRepository;
+
+	/**
+	 * Constructor used to avoid field dependency injection
+	*/		
+	
+	public DefaultCartService(CartRepository cartRepository) {
+		
+		this.cartRepository = cartRepository;
+	}
 	
 	public Cart createCart() {
 		
