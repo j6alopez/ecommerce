@@ -93,6 +93,7 @@ public class DefaultCartServiceTest {
 		
 		//then
 		assertThat(cartWithProducts.getCartItemSet().size()).isEqualTo(cartArticleList.size());
+		assertThat(cartWithProducts.getCartItemSet().size()).isEqualTo(productRepository.count());
 
 	}
 	

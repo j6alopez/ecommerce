@@ -1,11 +1,9 @@
-package com.ecommerce;
+package com.ecommerce.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatObject;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
@@ -17,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import com.ecommerce.domain.Article;
-import com.ecommerce.domain.Cart;
-import com.ecommerce.domain.Product;
 import com.ecommerce.repository.ArticleRepository;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
