@@ -14,7 +14,8 @@ import com.ecommerce.domain.Product;
 public interface CartService {
 	
 	public Cart createCart();
-	public Optional<Cart> deleteCartById(Long id);
+	public Optional<Cart> getCartbyId(Long id);	
 	public Cart addProductsToCart(Long id , Set<Product> cartItemList);
+	public Optional<Cart> deleteCartById(Long id);
 	
 }
