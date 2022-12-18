@@ -1,10 +1,8 @@
 package com.ecommerce.service;
 
 import java.util.Optional;
-import java.util.Set;
 
 import com.ecommerce.domain.Cart;
-import com.ecommerce.domain.Product;
 
 /**
  * CartService Interface.Allows multiple services for {@link com.ecommerce.domain.Cart}
@@ -15,7 +13,7 @@ public interface CartService {
 	
 	public Cart createCart();
 	public Optional<Cart> getCartbyId(Long id);	
-	public Cart addProductsToCart(Long id , Set<Product> cartItemList);
+	public Optional<Cart> addProductsToCart(Cart cart);
 	public Optional<Cart> deleteCartById(Long id);
 	
 }

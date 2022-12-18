@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
@@ -39,9 +40,10 @@ public class Cart {
 	@Positive
 	@JsonProperty("cart_id")
 	private  Long id;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
+	@JsonManagedReference
 	@JsonProperty("items")
 	@JsonInclude(value = JsonInclude.Include.NON_EMPTY)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cart")
 	private  Set<Product> cartItemSet = new HashSet<>();
 	
 	public Cart(@Positive Long id) {

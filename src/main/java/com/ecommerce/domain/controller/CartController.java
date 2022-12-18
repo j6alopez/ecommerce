@@ -1,14 +1,12 @@
 package com.ecommerce.domain.controller;
 
-import java.util.Set;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.domain.Cart;
-import com.ecommerce.domain.Product;
 import com.ecommerce.service.CartService;
 
 import jakarta.validation.constraints.Positive;
@@ -73,7 +70,7 @@ public final class CartController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getCart(@PathVariable @Positive Long id){ 
 		
-		return ResponseEntity.ok("Body");
+		return ResponseEntity.of(cartService.getCartbyId(id));
 		
 	}	
 
@@ -85,9 +82,11 @@ public final class CartController {
 	 * 		  Items to be added
 	*/		
 	@PostMapping("/{id}/add")
-	public ResponseEntity<?> addItems(@PathVariable @Positive Long id, @RequestBody Set<Product> addItems){
-		
-		return ResponseEntity.ok("Body");
+	public ResponseEntity<?> addItems(@PathVariable @Positive Long id, @RequestBody Cart cart){
+		if (! Objects.equals(id, cart.getId())) return ResponseEntity
+													   	.status(HttpStatus.NOT_ACCEPTABLE)
+													   	.build();
+		return ResponseEntity.of(cartService.addProductsToCart(cart));
 		
 	}
 

@@ -1,6 +1,8 @@
 package com.ecommerce.domain;
 
 import com.ecommerce.domain.key.ProductKey;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -34,10 +36,12 @@ public class Product implements CartItem{
 	
 	@Id
 	@ManyToOne
+	@JsonBackReference
 	private Cart cart;
 	
 	@Id
 	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JsonUnwrapped
 	private Article article;
 	
 	private long amount;

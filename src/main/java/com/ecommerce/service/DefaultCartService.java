@@ -1,15 +1,11 @@
 package com.ecommerce.service;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.domain.Article;
 import com.ecommerce.domain.Cart;
 import com.ecommerce.domain.Product;
 import com.ecommerce.repository.ArticleRepository;
@@ -41,8 +37,8 @@ public class DefaultCartService implements CartService {
 	 * Creates a {@link com.ecommerce.domain.Cart}
 	 */
 	public Cart createCart() {
-
-		return cartRepository.save(new Cart());
+			
+		return cartRepository.save(new Cart());		
 
 	}
 
@@ -51,23 +47,29 @@ public class DefaultCartService implements CartService {
 	 */	
 	
 	public Optional<Cart> getCartbyId(Long id) {
-		
+		System.out.println(cartRepository.findById(id).toString());
 		return  cartRepository.findById(id);	
 	}
 
 	/**
-	 * Adds products to {@link com.ecommerce.domain.Cart} Remove element when
+	 * Adds products to {@link com.ecommerce.domain.Cart} Remove elements when
 	 * {@link com.ecommerce.domain.Product#getAmount()} is 0
 	 */
 
-	public Cart addProductsToCart(Long id, Set<Product> cartItemList) {
-
-		Cart cart = cartRepository.getReferenceById(id);
-		cart.getCartItemSet().addAll(cartItemList);
-		cart.getCartItemSet().removeIf(product -> product.getAmount() == 0);
-		cartRepository.save(cart);
-
-		return cart;
+	public Optional<Cart> addProductsToCart(Cart cart) {
+		
+		return 
+	    cartRepository
+		.findById(cart.getId())
+		.map(
+			mappedCart 
+			-> { //Remove items with amount == 0 and persist Cart
+				Set<Product> productSet = cart.getCartItemSet();
+				productSet.removeIf(product -> product.getAmount() == 0);
+				cart.setCartItemSet(productSet);
+				return Optional.of(cartRepository.save(cart));
+			})
+		.orElse(Optional.empty());  
 
 	}
 
