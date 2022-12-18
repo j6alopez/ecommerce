@@ -1,4 +1,4 @@
-package com.ecommerce.domain.controller;
+package com.ecommerce.controller;
 
 import java.util.Objects;
 

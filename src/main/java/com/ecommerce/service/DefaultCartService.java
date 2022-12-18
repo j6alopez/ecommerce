@@ -4,11 +4,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.domain.Cart;
 import com.ecommerce.domain.Product;
-import com.ecommerce.repository.ArticleRepository;
 import com.ecommerce.repository.CartRepository;
 
 /**
@@ -21,16 +23,14 @@ import com.ecommerce.repository.CartRepository;
 public class DefaultCartService implements CartService {
 
 	private final CartRepository cartRepository;
-	private final ArticleRepository articleRepository;
 
 	/**
 	 * Constructor used to avoid field dependency injection
 	 */
 	@Autowired
-	public DefaultCartService(CartRepository cartRepository, ArticleRepository articleRepository) {
+	public DefaultCartService(CartRepository cartRepository) {
 
 		this.cartRepository 	= cartRepository;
-		this.articleRepository 	= articleRepository;
 	}
 
 	/**
@@ -45,9 +45,9 @@ public class DefaultCartService implements CartService {
 	/**
 	 * Retrieves information about  {@link com.ecommerce.domain.Cart} 
 	 */	
-	
+	@CachePut(value = "cart")
 	public Optional<Cart> getCartbyId(Long id) {
-		System.out.println(cartRepository.findById(id).toString());
+		
 		return  cartRepository.findById(id);	
 	}
 
@@ -55,7 +55,7 @@ public class DefaultCartService implements CartService {
 	 * Adds products to {@link com.ecommerce.domain.Cart} Remove elements when
 	 * {@link com.ecommerce.domain.Product#getAmount()} is 0
 	 */
-
+	@Caching
 	public Optional<Cart> addProductsToCart(Cart cart) {
 		
 		return 
@@ -85,6 +85,19 @@ public class DefaultCartService implements CartService {
 
 		return optional;
 
+	}	
+
+	public void deleteCartsByTTLPolicy(){
+		
+		cartRepository.deleteAll();
+		
 	}
+
+	@Scheduled(fixedRateString = "${caching.spring.cartTTL}")
+	private void runTTLPolicy(){
+		
+		cartRepository.deleteAll();
+		
+	}	
 
 }
