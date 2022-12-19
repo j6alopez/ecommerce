@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.ecommerce.domain.Article;
 import com.ecommerce.domain.Cart;
+import com.ecommerce.domain.Product;
 import com.ecommerce.service.CartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -73,7 +77,7 @@ public class CartControllerTest {
 	}
 	
 	@Test
-	public void getInCorrectCart() throws Exception {
+	public void getWrongCart() throws Exception {
 		
 		//given
 		given(cartService.createCart()).willReturn(new Cart(1L));		
@@ -87,6 +91,55 @@ public class CartControllerTest {
 		//then
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 		
+	}	
+
+	@Test
+	public void addProductsToCorrectCart() throws Exception {
+		
+		//given
+		Cart mockedCart = new Cart(1l);
+		Set<Product>  cartItemSet = new HashSet<Product>();
+		
+		Article article = new Article(100L,"ItemTest1");	
+		cartItemSet.add(new Product(mockedCart, article, 3));
+		
+		mockedCart.setCartItemSet(cartItemSet);
+		
+		given(cartService.addProductsToCart(mockedCart))
+						 .willReturn(Optional.of(mockedCart));
+		//when
+		MockHttpServletResponse response = mvc.perform(post("/carts/{id}/add",1L)
+															.accept(MediaType.APPLICATION_JSON)
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(json.write(mockedCart).getJson())
+															).andReturn().getResponse();
+		//then
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(response.getContentAsString()).isEqualTo(json.write(mockedCart).getJson());	
+	}
+
+	@Test
+	public void addProductsToWrongCart() throws Exception {
+		
+		//given
+		Cart mockedCart = new Cart(1l);
+		Set<Product>  cartItemSet = new HashSet<Product>();
+		
+		Article article = new Article(100L,"ItemTest1");	
+		cartItemSet.add(new Product(mockedCart, article, 3));
+		
+		mockedCart.setCartItemSet(cartItemSet);
+		
+		given(cartService.addProductsToCart(mockedCart))
+						 .willReturn(Optional.of(mockedCart));
+		//when
+		MockHttpServletResponse response = mvc.perform(post("/carts/{id}/add",2L)
+															.accept(MediaType.APPLICATION_JSON)
+															.contentType(MediaType.APPLICATION_JSON)
+															.content(json.write(mockedCart).getJson())
+															).andReturn().getResponse();
+		//then
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}	
 	
 	@Test	
@@ -106,7 +159,7 @@ public class CartControllerTest {
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 	}	
 	@Test	
-	public void deleteInCorrectCart() throws Exception {
+	public void deleteWrongCart() throws Exception {
 		
 		//given
 		given(cartService.createCart()).willReturn(new Cart(1L));		
