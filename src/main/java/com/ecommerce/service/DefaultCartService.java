@@ -52,7 +52,7 @@ public class DefaultCartService implements CartService {
 	 */
 	@Caching
 	public Optional<Cart> addProductsToCart(Cart cart) {
-		
+		final int ZERO=0;
 		return 
 	    cartRepository
 		.findById(cart.getId())
@@ -60,7 +60,7 @@ public class DefaultCartService implements CartService {
 			mappedCart 
 			-> { //Remove items with amount == 0 and persist Cart
 				Set<Product> productSet = cart.getCartItemSet();
-				productSet.removeIf(product -> product.getAmount() == 0);
+				productSet.removeIf(product -> product.getAmount() == ZERO);
 				cart.setCartItemSet(productSet);
 				return Optional.of(cartRepository.save(cart));
 			})
