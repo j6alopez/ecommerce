@@ -94,14 +94,8 @@ public class CartEntityTest {
 
 	@Test
 	public void deleteCart() {
-		//given		
-		List<Article> cartArticleList = articleRepository.findAll(); 
-		Set<Product>  cartItemSet = new HashSet<Product>();
-		cartArticleList.stream()
-					   .forEach(article -> cartItemSet.add(new Product(cart, article, 0)));
 		//when
-		Cart persistedCart = cartRepository.save(cart);
-		cartRepository.delete(persistedCart);
+		cartRepository.delete(cart);
 		
 		//then
 		assertThat((int) cartRepository.count()).isZero();		

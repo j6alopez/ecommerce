@@ -3,7 +3,6 @@ package com.ecommerce.service;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,13 +23,9 @@ public class DefaultCartService implements CartService {
 
 	private final CartRepository cartRepository;
 
-	/**
-	 * Constructor used to avoid field dependency injection
-	 */
-	@Autowired
 	public DefaultCartService(CartRepository cartRepository) {
 
-		this.cartRepository 	= cartRepository;
+		this.cartRepository = cartRepository;
 	}
 
 	/**
@@ -87,14 +82,9 @@ public class DefaultCartService implements CartService {
 
 	}	
 
-	public void deleteCartsByTTLPolicy(){
-		
-		cartRepository.deleteAll();
-		
-	}
 
 	@Scheduled(fixedRateString = "${caching.spring.cartTTL}")
-	private void runTTLPolicy(){
+	protected void runTTLPolicy(){
 		
 		cartRepository.deleteAll();
 		

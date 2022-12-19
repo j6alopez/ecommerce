@@ -1,9 +1,11 @@
 package com.ecommerce.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -11,17 +13,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import com.ecommerce.domain.Article;
 import com.ecommerce.domain.Cart;
 import com.ecommerce.domain.Product;
-import com.ecommerce.repository.ArticleRepository;
 import com.ecommerce.repository.CartRepository;
-import com.ecommerce.repository.ProductRepository;
 
 /**
  * Tests Entity relations
@@ -32,32 +32,19 @@ import com.ecommerce.repository.ProductRepository;
 @DataJpaTest
 @Sql("/test.sql")
 public class DefaultCartServiceTest {
+
+	private AutoCloseable autoCloseAble;
 	
 	@Mock
-	private Cart cart;
+	private CartRepository cartRepository;
 	
-	private final CartRepository cartRepository ;	
-	private final ProductRepository productRepository ;		
-	private final ArticleRepository articleRepository ;		
-	
-	@Autowired
-	public DefaultCartServiceTest(CartRepository cartRepository, ProductRepository productRepository, ArticleRepository articleRepository ) {
-		
-		this.cartRepository    = cartRepository;
-		this.productRepository = productRepository;
-		this.articleRepository = articleRepository;
-		
-	}
-	
-	private AutoCloseable autoCloseAble;
+	private CartService cartService; 
 	
 	@BeforeEach
 	public void setUp() {
 		
-		autoCloseAble = MockitoAnnotations.openMocks(this);
-		//given		
-		cart = new Cart();
-				
+		autoCloseAble = MockitoAnnotations.openMocks(this);	
+		cartService = new DefaultCartService(cartRepository);
 	}
 	
 	@AfterEach
@@ -69,46 +56,69 @@ public class DefaultCartServiceTest {
 	
 	@Test
 	public void createCart() {
+		//given	
+		
+		Cart dummyCart = new Cart(1L);
+		when(cartService.createCart()).thenReturn(dummyCart);
 		//when
-		cartRepository.save(cart);
-		//then
-		assertThat( (int) cartRepository.count()).isOne();		
+		Cart result = cartService.createCart();
+
+		assertThat(result).isNotNull();
+		verify(cartRepository, times(1)).save(new Cart());
 
 	}
+
+	@Test
+	public void getCart() {
+		//given	
+		
+		Cart dummyCart = new Cart(1L);
+		when(cartService.getCartbyId(dummyCart.getId()))
+						.thenReturn(Optional.of(dummyCart));
+//		//when
+		Optional<Cart> result = cartService.getCartbyId(dummyCart.getId());
+
+		assertThat(result).isPresent();
+		verify(cartRepository, times(1)).findById(dummyCart.getId());
+
+	}	
+	
 	
 	@Test
 	public void addProductsToCart() {
-		//given		
-		Cart persistedCart = cartRepository.save(cart);
-		
-		List<Article> cartArticleList = articleRepository.findAll(); 
+		//given	
+		Cart dummyCart = new Cart(1l);
 		Set<Product>  cartItemSet = new HashSet<Product>();
-		cartArticleList.stream()
-					   .forEach(article -> cartItemSet.add(new Product(persistedCart, article, 0)));
-				
-		persistedCart.setCartItemSet(cartItemSet);
 		
+		Article article = new Article(100L,"ItemTest1");	
+		cartItemSet.add(new Product(dummyCart, article, 3));
+		
+		dummyCart.setCartItemSet(cartItemSet);
 		//when
-		Cart cartWithProducts = cartRepository.save(persistedCart);
+		when(cartRepository.save(dummyCart))
+		   				   .thenReturn(dummyCart);
 		
+		when(cartService.addProductsToCart(dummyCart))
+		   				.thenReturn(Optional.of(dummyCart));		
 		//then
-		assertThat(cartWithProducts.getCartItemSet().size()).isEqualTo(cartArticleList.size());
-		assertThat(cartWithProducts.getCartItemSet().size()).isEqualTo(productRepository.count());
+		Optional <Cart> response = cartService.addProductsToCart(dummyCart);
+		
+		verify(cartRepository, times(1)).findById(dummyCart.getId());		
+		verify(cartRepository, times(1)).save(dummyCart);		
+		assertThat(response).isPresent();
 
 	}
 	
 	@Test
 	public void deleteCart() {
-		//given	
+		//given
+		Cart dummyCart = new Cart(1L);
 		
-		Cart persistedCart = cartRepository.save(cart);
-		//when
-		
-		cartRepository.deleteById(persistedCart.getId());
-		Optional<Cart> optional =  cartRepository.findById(persistedCart.getId());
-		//then
-		assertThat(optional).isEmpty();
+		when(cartRepository.findById(dummyCart.getId()))
+						   .thenReturn(Optional.of(dummyCart));
+		cartService.deleteCartById(dummyCart.getId());
+		Mockito.verify(cartRepository,times(1)).deleteById(dummyCart.getId());
 
-	}	
+	}
 	
 }

@@ -21,7 +21,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.ecommerce.domain.Cart;
-import com.ecommerce.domain.controller.CartController;
 import com.ecommerce.service.CartService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -111,7 +110,7 @@ public class CartControllerTest {
 		
 		//given
 		given(cartService.createCart()).willReturn(new Cart(1L));		
-		Optional<Cart> mockedCart = Optional.of(cartService.createCart());
+		Optional<Cart> mockedCart = Optional.empty();
 		
 		//when
 		when(cartService.deleteCartById(1L)).thenReturn(mockedCart);
@@ -120,6 +119,6 @@ public class CartControllerTest {
 				.accept(MediaType.APPLICATION_JSON)
 				).andReturn().getResponse();
 		//then
-		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
 	}	
 }
