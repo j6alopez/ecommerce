@@ -1,4 +1,7 @@
 com.ecommerce
+com.ecommerce.config
+com.ecommerce.controller
 com.ecommerce.domain
 com.ecommerce.domain.key
 com.ecommerce.repository
+com.ecommerce.service
